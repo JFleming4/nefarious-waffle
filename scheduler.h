@@ -4,22 +4,38 @@
 #include <pthread.h>
 
 #define NUM_OF_CPU 4
-#define Q_CAPACITY 10
+#define Q_CAPACITY 30
+#define NUM_QUEUE 3
+#define MAX_SLEEP 10
 typedef struct {
-    int priority;
     int pid;
+    long start_time;
+    int sleep_avg;
+    long last_execution;
+    int static_priority;
+    int dynamic_priority;
+    int expected_execution_time;
+    int accumulated_execution_time;
+    int last_cpu;
 }process_info_t;
     
 typedef struct {
-    pthread_t thread;
-    pthread_mutex_t mutex;
     process_info_t queue[Q_CAPACITY];
     int tail;
     int head;
     int capacity;
     int size;
+}cpu_queue_t;
+
+typedef struct {
+    pthread_t thread;
+    pthread_mutex_t mutex;
+    cpu_queue_t ready_queue[NUM_QUEUE];
+    int size;
     
 }consumer_t;
+
+
 
 void create_thread(pthread_t *thread, void * func, void * mes) {
     int max_priority;
