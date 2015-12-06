@@ -1,7 +1,7 @@
-all: main scheduler
+all: scheduler
 
 CFLAGS=-D_REENTRANT
 LDFLAGS=-lpthread
 
 clean:
-	rm -rf main scheduler
+	rm -rf scheduler
