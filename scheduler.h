@@ -4,9 +4,14 @@
 #include <pthread.h>
 
 #define NUM_OF_CPU 4
-#define Q_CAPACITY 30
+#define Q_CAPACITY 50
 #define NUM_QUEUE 3
 #define MAX_SLEEP 10
+
+#define RR 1
+#define FIFO 0
+#define NORM 2
+
 typedef struct {
     int pid;
     long start_time;
@@ -17,6 +22,7 @@ typedef struct {
     int expected_execution_time;
     int accumulated_execution_time;
     int last_cpu;
+    int scheduling_type;
 }process_info_t;
     
 typedef struct {
@@ -35,6 +41,27 @@ typedef struct {
     
 }consumer_t;
 
+void print_process_info(process_info_t task) {
+    const char *p;
+    if (task.scheduling_type == RR)
+        p = "RR";
+    else if (task.scheduling_type == FIFO)
+        p = "FIFO";
+    else
+        p = "NORMAL";
+    
+    printf(
+        "Process %d has scheduling type of %s, static priority %d and dynamic priority %d.\nIt has a total expected execution time of %dms and has been running for %dms.\nIt was last running on CPU %d and started at %ld.\n",
+        task.pid,
+        p,
+        task.static_priority,
+        task.dynamic_priority,
+        task.expected_execution_time,
+        task.accumulated_execution_time,
+        task.last_cpu,
+        task.start_time
+    );
+}
 
 
 void create_thread(pthread_t *thread, void * func, void * mes) {
